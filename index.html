@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineCircle | Local Edition</title>
+    
+    <style>
+        :root {
+            --bg-color: #0f0f11;
+            --surface-color: #1a1a1e;
+            --primary-color: #e50914; 
+            --ai-color: #8a2be2; /* Purple for AI */
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-family);
+        }
+
+        /* Navbar */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background-color: var(--surface-color);
+            border-bottom: 1px solid #333;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+            letter-spacing: 1px;
+        }
+
+        /* User Profile Area */
+        #user-profile {
+            display: none;
+            align-items: center;
+            gap: 15px;
+        }
+
+        #user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--primary-color);
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        .logout-btn {
+            background-color: transparent;
+            border: 1px solid var(--text-muted);
+            color: var(--text-muted);
+        }
+
+        /* Main Content Container */
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* Local Login Section */
+        #login-section {
+            text-align: center;
+            margin-top: 100px;
+            background-color: var(--surface-color);
+            padding: 50px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        #login-section input {
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #444;
+            background-color: var(--bg-color);
+            color: white;
+            margin-right: 10px;
+            width: 250px;
+        }
+
+        /* Dashboard (Hidden by default) */
+        #dashboard-section {
+            display: none;
+        }
+
+        /* AI Recommender Section */
+        .ai-section {
+            background: linear-gradient(145deg, #1a1a1e, #2a1b3d);
+            border: 1px solid var(--ai-color);
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.2);
+        }
+
+        .ai-section h3 {
+            margin-top: 0;
+            color: #d8b4fe;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ai-input-area {
+            display: flex;
+            gap: 15px;
+        }
+
+        .ai-input-area input {
+            flex: 1;
+            padding: 12px;
+            background-color: rgba(0,0,0,0.3);
+            border: 1px solid #555;
+            border-radius: 4px;
+            color: white;
+            font-size: 16px;
+        }
+
+        .ai-btn {
+            background-color: var(--ai-color);
+        }
+
+        #ai-output {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(0,0,0,0.4);
+            border-radius: 4px;
+            border-left: 4px solid var(--ai-color);
+            display: none;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .ai-loading {
+            color: #d8b4fe;
+            font-style: italic;
+            display: none;
+            margin-top: 15px;
+        }
+
+        /* Movie Card */
+        .movie-card {
+            display: flex;
+            background-color: var(--surface-color);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+
+        .movie-card img {
+            width: 250px;
+            object-fit: cover;
+        }
+
+        .movie-info {
+            padding: 30px;
+        }
+
+        .tag {
+            background-color: var(--primary-color);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        /* Discussion Board */
+        .discussion-board {
+            background-color: var(--surface-color);
+            padding: 30px;
+            border-radius: 8px;
+        }
+
+        .comment-input-area {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+
+        .comment-input-area input {
+            flex: 1;
+            padding: 12px;
+            background-color: var(--bg-color);
+            border: 1px solid #333;
+            border-radius: 4px;
+            color: white;
+            font-size: 16px;
+        }
+
+        .comment {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .comment img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .comment-content {
+            background-color: var(--bg-color);
+            padding: 15px;
+            border-radius: 8px;
+            flex: 1;
+        }
+
+        .comment-content strong {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+        
+        .timestamp {
+            font-size: 11px;
+            color: #666;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">CineCircle</div>
+        
+        <div id="user-profile">
+            <span id="user-name"></span>
+            <img id="user-avatar" src="" alt="Avatar">
+            <button class="logout-btn" onclick="handleSignOut()">Leave Club</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div id="login-section">
+            <h1 style="margin-top: 0;">Enter the Club</h1>
+            <p style="color: #aaa; margin-bottom: 30px;">Choose a display name to join the discussion.</p>
+            <input type="text" id="login-name" placeholder="Your Name..." onkeypress="handleEnter(event, handleSignIn)">
+            <button onclick="handleSignIn()">Join</button>
+        </div>
+
+        <div id="dashboard-section">
+            
+            <div class="ai-section">
+                <h3>✨ AI Movie Matchmaker</h3>
+                <p style="color: #aaa; font-size: 14px; margin-bottom: 20px;">Describe what you're in the mood for, and our AI will find the perfect film.</p>
+                <div class="ai-input-area">
+                    <input type="text" id="ai-prompt" placeholder="e.g., 'A mind-bending sci-fi with a plot twist' or 'a funny 90s comedy'" onkeypress="handleEnter(event, getAIRecommendation)">
+                    <button class="ai-btn" onclick="getAIRecommendation()">Ask AI</button>
+                </div>
+                <div id="ai-loading" class="ai-loading">Analyzing cinematic database...</div>
+                <div id="ai-output"></div>
+            </div>
+
+            <div class="movie-card">
+                <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Featured Movie">
+                <div class="movie-info">
+                    <span class="tag">Movie of the Week</span>
+                    <h2 style="margin: 15px 0 10px;">Interstellar (2014)</h2>
+                    <p style="color: var(--text-muted); line-height: 1.6;">A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival. Let's dissect the scientific accuracy and the emotional core of Nolan's epic.</p>
+                </div>
+            </div>
+
+            <div class="discussion-board">
+                <h3 style="margin-top: 0; border-bottom: 1px solid #333; padding-bottom: 10px;">Club Discussion</h3>
+                
+                <div class="comment-input-area">
+                    <input type="text" id="new-comment" placeholder="Share your review..." onkeypress="handleEnter(event, postComment)">
+                    <button onclick="postComment()">Post Review</button>
+                </div>
+
+                <div id="comments-container">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* --- STATE MANAGEMENT --- */
+        let currentUser = null;
+        const STORAGE_KEY_USER = 'cineCircle_user';
+        const STORAGE_KEY_COMMENTS = 'cineCircle_comments';
+
+        // Initialize application on load
+        window.onload = () => {
+            const savedUser = localStorage.getItem(STORAGE_KEY_USER);
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showDashboard();
+            }
+        };
+
+        /* --- AUTHENTICATION (LOCAL) --- */
+        function handleSignIn() {
+            const nameInput = document.getElementById('login-name').value.trim();
+            if (!nameInput) return alert("Please enter a name.");
+
+            // Create user object & generate avatar based on name
+            currentUser = {
+                name: nameInput,
+                avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(nameInput)}&background=random&color=fff`
+            };
+
+            // Save to LocalStorage
+            localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
+            showDashboard();
+        }
+
+        function handleSignOut() {
+            localStorage.removeItem(STORAGE_KEY_USER);
+            currentUser = null;
+            document.getElementById('login-name').value = '';
+            
+            document.getElementById('dashboard-section').style.display = 'none';
+            document.getElementById('user-profile').style.display = 'none';
+            document.getElementById('login-section').style.display = 'block';
+        }
+
+        function showDashboard() {
+            // Update UI with user info
+            document.getElementById('user-name').innerText = currentUser.name;
+            document.getElementById('user-avatar').src = currentUser.avatar;
+            
+            // Toggle visibility
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('user-profile').style.display = 'flex';
+            document.getElementById('dashboard-section').style.display = 'block';
+
+            loadComments(); // Load saved discussions
+        }
+
+        /* --- DISCUSSION BOARD --- */
+        function postComment() {
+            const inputField = document.getElementById('new-comment');
+            const text = inputField.value.trim();
+            if (!text) return;
+
+            const newComment = {
+                name: currentUser.name,
+                avatar: currentUser.avatar,
+                text: text,
+                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+            };
+
+            // Get existing comments, add new, and save back to local storage
+            let comments = JSON.parse(localStorage.getItem(STORAGE_KEY_COMMENTS) || '[]');
+            comments.unshift(newComment); // Add to beginning
+            localStorage.setItem(STORAGE_KEY_COMMENTS, JSON.stringify(comments));
+
+            inputField.value = '';
+            loadComments(); // Re-render
+        }
+
+        function loadComments() {
+            const container = document.getElementById('comments-container');
+            let comments = JSON.parse(localStorage.getItem(STORAGE_KEY_COMMENTS) || '[]');
+            
+            // Add a default mock comment if local storage is completely empty
+            if (comments.length === 0) {
+                comments = [{
+                    name: "System",
+                    avatar: "https://ui-avatars.com/api/?name=S&background=e50914&color=fff",
+                    text: "Welcome to the club! What did you think of the docking scene?",
+                    time: "Just now"
+                }];
+            }
+
+            // Generate HTML
+            container.innerHTML = comments.map(c => `
+                <div class="comment">
+                    <img src="${c.avatar}" alt="Avatar">
+                    <div class="comment-content">
+                        <strong>${c.name} <span class="timestamp">${c.time}</span></strong>
+                        ${c.text}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* --- AI SIMULATOR --- */
+        // Simulated AI Knowledge Base
+        const aiDatabase = [
+            { keywords: ['space', 'sci-fi', 'alien', 'future'], title: 'Arrival (2016)', pitch: 'Since you like sci-fi, check out this brilliant film about a linguist tasked with communicating with alien visitors. It will challenge how you perceive time.' },
+            { keywords: ['funny', 'comedy', 'laugh', '90s'], title: 'The Big Lebowski (1998)', pitch: 'You want a laugh? "The Dude" abides. A hilarious, chaotic mistaken-identity story involving bowling, rugs, and absolute absurdity.' },
+            { margin: ['scary', 'horror', 'ghost', 'fear'], title: 'Hereditary (2018)', pitch: 'Looking for a scare? This is a masterclass in modern horror. It explores grief wrapped up in a terrifying, deeply unsettling supernatural mystery.' },
+            { keywords: ['action', 'fight', 'explosion', 'fast'], title: 'Mad Max: Fury Road (2015)', pitch: 'Pure adrenaline. A breathtaking, non-stop chase across a post-apocalyptic wasteland with some of the best practical effects ever put to film.' },
+            { keywords: ['sad', 'cry', 'drama', 'emotional'], title: 'Good Will Hunting (1997)', pitch: 'If you want a deeply emotional drama, this story of a troubled math genius and his compassionate therapist is incredibly moving.' }
+        ];
+
+        function getAIRecommendation() {
+            const prompt = document.getElementById('ai-prompt').value.toLowerCase();
+            if (!prompt) return;
+
+            const outputDiv = document.getElementById('ai-output');
+            const loadingDiv = document.getElementById('ai-loading');
+            
+            // UI State updates
+            outputDiv.style.display = 'none';
+            loadingDiv.style.display = 'block';
+
+            // Simulate Network/Processing Delay (1.5 seconds)
+            setTimeout(() => {
+                loadingDiv.style.display = 'none';
+                
+                // Simple logic to find matching keywords
+                let recommendation = null;
+                for (let movie of aiDatabase) {
+                    if (movie.keywords && movie.keywords.some(kw => prompt.includes(kw))) {
+                        recommendation = movie;
+                        break;
+                    }
+                }
+
+                // Fallback if no keywords match
+                if (!recommendation) {
+                    recommendation = { 
+                        title: 'Everything Everywhere All at Once (2022)', 
+                        pitch: "I couldn't pin down an exact genre, but based on your vibe, you should try this mind-bending, hilarious, and emotionally devastating multiverse masterpiece."
+                    };
+                }
+
+                // Render AI Response
+                outputDiv.innerHTML = `<strong>Based on your prompt, I recommend:</strong><br><br>
+                                       <span style="color: #d8b4fe; font-size: 18px; font-weight: bold;">${recommendation.title}</span><br>
+                                       ${recommendation.pitch}`;
+                outputDiv.style.display = 'block';
+                
+            }, 1500);
+        }
+
+        // Helper for Enter key presses
+        function handleEnter(event, callback) {
+            if (event.key === 'Enter') {
+                callback();
+            }
+        }
+    </script>
+</body>
+</html>
